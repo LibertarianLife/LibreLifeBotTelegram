@@ -51,6 +51,7 @@ class IrcBich(BichBot):
         self.BOT_NAME_PREFIX = self.connection_settings('InitialBotNick')
         self.BOT_REALNAME = self.connection_settings('REALNAME')
         self.botName = self.BOT_NAME_PREFIX
+        self.botIrcUserName = self.connection_settings('IrcUserName')
         self.botNickSalt = 0
         self.nickserv_password = self.connection_setting_or_None('nickserv_password')
 
@@ -212,7 +213,7 @@ class IrcBich(BichBot):
                 print("connected, self.sending login handshake, self.botName=[" + self.botName + "]…")
                 # print (self.irc_socket.recv(2048).decode("UTF-8"))
                 self.send(f'NICK {self.botName}\r\n')
-                self.send(f'USER {self.botName} {self.botName} {self.botName} :{self.BOT_REALNAME}\r\n')
+                self.send(f'USER {self.botIrcUserName} {self.botIrcUserName} {self.botIrcUserName} :{self.BOT_REALNAME}\r\n')
                 # self.send('NickServ IDENTIFY '+settings.settings('password')+'\r\n')
                 # self.send('MODE '+self.botName+' +x')
 
@@ -680,8 +681,7 @@ class IrcBich(BichBot):
                         self.send(voting_results)
                     """
 
-                    print("calling maybe_print_news()", flush=True)
-                    self.maybe_print_news(self.botName, data)
+                    print("calling maybe_print_*()", flush=True)
                     self.maybe_print_calc(self.botName, data)
                     self.maybe_print_help(self.botName, data)
                     self.maybe_print_search(self.botName, data, sent_by)

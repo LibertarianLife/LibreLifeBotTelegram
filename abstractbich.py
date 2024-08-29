@@ -1,3 +1,7 @@
+#[22:00:05] <ПИРАНЬЯ3000> там только доделать надо multiple results
+#[22:04:56] <ПИРАНЬЯ3000> а, и !lq !ql приделать
+#[22:10:50] <ПИРАНЬЯ3000> а, и !dq !qd
+
 # abstractbich.py
 
 import datetime
@@ -68,6 +72,7 @@ class BichBot:
         self.measurementRur1 = self.gnome1rur
         self.measurementRur2 = self.gnome1rur
         self.quotes_array = []
+        self.quotes_array1 = []
 
     def settings_by_key(self, key):
         return self.getconfig()[key]
@@ -272,33 +277,6 @@ class BichBot:
         return newer
 
     @staticmethod
-    def is_runews_command(bot_nick, str_line):
-        """
-            :x!y@example.org PRIVMSG BichBot :msg text
-        """
-        dataTokensDelimitedByWhitespace = str_line.split(" ")
-        # dataTokensDelimitedByWhitespace[0] :nick!uname@addr.i2p
-        # dataTokensDelimitedByWhitespace[1] PRIVMSG
-
-        # dataTokensDelimitedByWhitespace[2] #ru
-        #  OR
-        # dataTokensDelimitedByWhitespace[2] BichBot
-
-        # dataTokensDelimitedByWhitespace[3] :!курс
-        communicationsLineName = dataTokensDelimitedByWhitespace[2] if len(
-            dataTokensDelimitedByWhitespace) > 2 else None
-        where_mes_exc = communicationsLineName
-        if len(dataTokensDelimitedByWhitespace) > 3:
-            line = " ".join(dataTokensDelimitedByWhitespace[3:])
-            is_in_private_query = where_mes_exc == bot_nick
-            bot_mentioned = bot_nick in line
-            commWithBot = is_in_private_query or bot_mentioned
-            return commWithBot and ("runews" in line or "руновости" in line) or (
-                    "!runews" in line or "!руновости" in line)
-        else:
-            return False
-
-    @staticmethod
     def is_help_command(bot_nick, str_line):
         """
             :x!y@example.org PRIVMSG BichBot :!help
@@ -373,30 +351,6 @@ class BichBot:
         except:
             import traceback as tb
             tb.print_exc()
-            return False
-
-    def is_uanews_command(self, bot_nick, str_line):
-        #:defender!~defender@example.org PRIVMSG BichBot :Чтобы получить войс, ответьте на вопрос: Как называется blah blah?
-        dataTokensDelimitedByWhitespace = str_line.split(" ")
-        # dataTokensDelimitedByWhitespace[0] :nick!uname@addr.i2p
-        # dataTokensDelimitedByWhitespace[1] PRIVMSG
-
-        # dataTokensDelimitedByWhitespace[2] #ru
-        # OR
-        # dataTokensDelimitedByWhitespace[2] BichBot
-
-        # dataTokensDelimitedByWhitespace[3] :!курс
-        communicationsLineName = dataTokensDelimitedByWhitespace[2] if len(
-            dataTokensDelimitedByWhitespace) > 2 else None
-        where_mes_exc = communicationsLineName
-        if len(dataTokensDelimitedByWhitespace) > 3:
-            line = " ".join(dataTokensDelimitedByWhitespace[3:])
-            is_in_private_query = where_mes_exc == bot_nick
-            bot_mentioned = bot_nick in line
-            commWithBot = is_in_private_query or bot_mentioned
-            return commWithBot and ("uanews" in line or "укрновости" in line) or (
-                    "!uanews" in line or "!укрновости" in line)
-        else:
             return False
 
     def is_search_command(self, bot_nick, str_line):
@@ -553,7 +507,6 @@ class BichBot:
         self.sendmsg(to_addr, f"{botnick} курс - prints financial report")
         self.sendmsg(to_addr, f"!!q <searchstr> or !!q <quoteid> - search quotes")
         self.sendmsg(to_addr, f"!!aq <quotetext> - add a quote")
-        self.sendmsg(to_addr, f"!uanews or !runews - новости Украины или РФ")
         self.sendmsg(to_addr, f"!help - prints help")
 
     def sendmsg(self, to_addr, msg):
@@ -581,136 +534,6 @@ class BichBot:
             if sent >= cnt: break
         if sent == 0: self.sendmsg(to_addr, "Нет новостей у меня")
     """
-
-    def print_new_runews_newsapi_org(self, to_addr):
-        old_news_cache = self.old_news_cache
-        old_news_cache_index = self.old_news_cache_index
-        if to_addr in old_news_cache:
-            cache = old_news_cache[to_addr]
-        else:
-            cache = {}
-            old_news_cache[to_addr] = cache
-        if to_addr in old_news_cache_index:
-            cache_index = old_news_cache_index[to_addr]
-        else:
-            cache_index = []
-            old_news_cache_index[to_addr] = cache_index
-        arts = self.ru_latest_news_newsapi_org() + self.latest_news_google_news_ru()
-
-        cnt = self.get_news_count_for_channel(to_addr)
-        sent = 0
-        index = 0
-        for a in arts:
-            if a is None: continue
-            url = a["url"]
-            if url in cache: continue
-            self.sendmsg(to_addr, "%s %s" % (str(url), str(a["title"])))
-            cache[url] = True
-            cache_index.append(url)
-            while len(cache_index) > 100:
-                first_url = cache_index.pop(0)
-                del cache[first_url]
-            sent = sent + 1
-            index = index + 1
-            if sent >= cnt: break
-        if sent == 0: self.sendmsg(to_addr, f'Нет новостей у меня, {datetime.datetime.now(pytz.utc)}')
-
-    def print_new_uanews_newsapi_org(self, to_addr):
-        old_news_cache = self.old_news_cache
-        old_news_cache_index = self.old_news_cache_index
-        if to_addr in old_news_cache:
-            cache = old_news_cache[to_addr]
-        else:
-            cache = {}
-            old_news_cache[to_addr] = cache
-        if to_addr in old_news_cache_index:
-            cache_index = old_news_cache_index[to_addr]
-        else:
-            cache_index = []
-            old_news_cache_index[to_addr] = cache_index
-        arts = self.ua_latest_news_newsapi_org()
-
-        cnt = self.get_news_count_for_channel(to_addr)
-        sent = 0
-        index = 0
-        for a in arts:
-            if a is None: continue
-            url = a["url"]
-            if url in cache: continue
-            self.sendmsg(to_addr, "%s %s" % (str(url), str(a["title"])))
-            cache[url] = True
-            cache_index.append(url)
-            while len(cache_index) > 100:
-                first_url = cache_index.pop(0)
-                del cache[first_url]
-            sent = sent + 1
-            index = index + 1
-            if sent >= cnt: break
-        if sent == 0: self.sendmsg(to_addr, "Нет новостей у меня")
-
-
-    def maybe_print_news(self, bot_nick, str_incoming_line):
-        sent_by = "unknown_sentBy"
-        dataTokensDelimitedByWhitespace = str_incoming_line.split(" ")
-        communicationsLineName = dataTokensDelimitedByWhitespace[2] if len(
-            dataTokensDelimitedByWhitespace) > 2 else None
-        if self.is_runews_command(bot_nick, str_incoming_line):
-            if self.grantCommand(sent_by, communicationsLineName):
-                kwlist = []
-                where_mes_exc = communicationsLineName
-                line = " ".join(dataTokensDelimitedByWhitespace[3:]) if len(
-                    dataTokensDelimitedByWhitespace) >= 4 else ""
-                if line.startswith(":"): line = line[1:]
-                print("'%s'" % line)
-                p = line.find("news")
-                if p == -1:
-                    p = line.find("новости")
-                    if p == -1:
-                        pass
-                    else:
-                        p = p + len("новости")
-                        line = line[p:].strip()
-                        print("'%s'" % line)
-                        if line != '': kwlist.append(line)
-                else:
-                    p = p + len("news")
-                    line = line[p:].strip()
-                    print("'%s'" % line)
-                    if line != '': kwlist.append(line)
-                if len(kwlist) == 0:
-                    self.print_new_runews_newsapi_org(where_mes_exc)
-                else:
-                    resultUrl = self.news_search_ctxwebsrch(kwlist[0], 1)
-                    self.sendmsg(where_mes_exc, "%s" % (resultUrl if resultUrl else f"Новостей не найдено. {datetime.datetime.now(pytz.utc)}"))
-        if self.is_uanews_command(bot_nick, str_incoming_line):
-            if self.grantCommand(sent_by, communicationsLineName):
-                kwlist = []
-                where_mes_exc = communicationsLineName
-                line = " ".join(dataTokensDelimitedByWhitespace[3:]) if len(
-                    dataTokensDelimitedByWhitespace) >= 4 else ""
-                if line.startswith(":"): line = line[1:]
-                print("'%s'" % line)
-                p = line.find("news")
-                if p == -1:
-                    p = line.find("новости")
-                    if p == -1:
-                        pass
-                    else:
-                        p = p + len("новости")
-                        line = line[p:].strip()
-                        print("'%s'" % line)
-                        if line != '': kwlist.append(line)
-                else:
-                    p = p + len("news")
-                    line = line[p:].strip()
-                    print("'%s'" % line)
-                    if line != '': kwlist.append(line)
-                if len(kwlist) == 0:
-                    self.print_new_uanews_newsapi_org(where_mes_exc)
-                else:
-                    resultUrl = self.news_search_ctxwebsrch(kwlist[0], 1)
-                    self.sendmsg(where_mes_exc, "%s" % (resultUrl if resultUrl else "Новостей не найдено. {datetime.datetime.now(pytz.utc)}"))
-
 
     def getch(self):
         self.ch = self.input[:1] if len(self.input)>0 else 'eof'
@@ -978,25 +801,47 @@ class BichBot:
             if self.grantCommand(sent_by, communicationsLineName):
                 self.print_usage(communicationsLineName, bot_nick)
 
-    def write_quotes(self):
+    def getQuotesFileName(self, isQuoteSetOne):
+        if isQuoteSetOne: return 'magi_quotes.json'
+        else: return 'greenbich_quotes.json'
+
+    def write_quotes(self, isQuoteSetOne):
         print(__name__, "writing quotes.json")
-        with open('quotes.json', 'w') as myfile:
-            myfile.write(get_pretty_json_string(self.quotes_array))
-        shell("echo \"begin...\" && cp -v /root/vcs_rig1/LibreLifeBotTelegram/quotes.json /zsata/ && echo \"exit status: $?\" && ls -alh /zsata/ && echo \"exit status: $?\" && echo \"done.\"")
+        fn = self.getQuotesFileName(isQuoteSetOne)
+        with open(fn, 'w') as myfile:
+            myfile.write(get_pretty_json_string(self.quotes_array1 if isQuoteSetOne else self.quotes_array))
+        #shell("echo \"begin...\" && cp -v /root/vcs_rig1/LibreLifeBotTelegram/*quotes.json /zsata/ && echo \"exit status: $?\" && ls -alh /zsata/ && echo \"exit status: $?\" && echo \"done.\"")
 
 
-    def read_quotes(self):
+    def read_quotes(self, isQuoteSetOne):
         # read file
         try:
-          print(__name__, "reading quotes.json")
-          with open('quotes.json', 'r') as myfile:
+          fn = self.getQuotesFileName(isQuoteSetOne)
+          print(__name__, f"reading {fn}")
+          with open(fn, 'r') as myfile:
               quotes_array = myfile.read()
-          self.quotes_array = json.loads(quotes_array)
+          if isQuoteSetOne:
+            self.quotes_array1 = json.loads(quotes_array)
+          else:
+            self.quotes_array = json.loads(quotes_array)
         except:
            traceback.print_exc()
            print(__name__, "warning: setting empty quotes_array")
            self.quotes_array = []
+           self.quotes_array1 = []
 
+    def print_last_quote(self, tok1, isQuoteSetOne):
+        at = tok1[2]
+        self.read_quotes(isQuoteSetOne)
+        arr = self.quotes_array1 if isQuoteSetOne else self.quotes_array
+        
+        q = arr[len(arr)-1]
+        msg = q["text"]
+        poster = q['posted-by'].split("!")[0]
+        self.sendmsg(at, f"[{q['id']}] {msg} ({poster} at {q['date-posted']})")
+        return
+            
+            
     # tok1[0] :nick!uname@addr.i2p
     # tok1[1] PRIVMSG
 
@@ -1006,14 +851,14 @@ class BichBot:
 
     # tok1[3] :!!aq/!!q
     # tok1[4:] tokens
-    def print_quote(self, tok1):
+    def print_quote(self, tok1, isQuoteSetOne):
         at = tok1[2]
         query = " ".join(tok1[4:]).strip()
         if len(query) == 0:
             # print a random quote
-            self.read_quotes()
+            self.read_quotes(isQuoteSetOne)
             from random import choice
-            q = choice(self.quotes_array)
+            q = choice(self.quotes_array1 if isQuoteSetOne else self.quotes_array)
             poster = q['posted-by'].split("!")[0]
             self.sendmsg(at, f"[{q['id']}] {q['text']} ({poster} at {q['date-posted']})")
             return
@@ -1023,8 +868,8 @@ class BichBot:
         except ValueError:
             # self.search_for_quote(query)
             query = query.lower()
-            self.read_quotes()
-            for q in self.quotes_array:
+            self.read_quotes(isQuoteSetOne)
+            for q in (self.quotes_array1 if isQuoteSetOne else self.quotes_array):
                 msg = q["text"]
                 if query in msg.lower():
                     poster = q['posted-by'].split("!")[0]
@@ -1033,34 +878,34 @@ class BichBot:
             return
         if num > 0:
             num = num - 1
-            self.read_quotes()
-            if num >= len(self.quotes_array):
-                self.sendmsg(at, f"Max quote number: {len(self.quotes_array)}.")
+            self.read_quotes(isQuoteSetOne)
+            if num >= len(self.quotes_array1 if isQuoteSetOne else self.quotes_array):
+                self.sendmsg(at, f"Max quote number: {len(self.quotes_array1 if isQuoteSetOne else self.quotes_array)}.")
             else:
-                q = self.quotes_array[num]
+                q = (self.quotes_array1 if isQuoteSetOne else self.quotes_array)[num]
                 poster = q['posted-by'].split("!")[0]
                 self.sendmsg(at, f"[{num + 1}] {q['text']} ({poster} at {q['date-posted']})")
         else:
             self.sendmsg(at, f"Need a positive int.")
 
-    def add_quote(self, tok1, communicationsLineName):
+    def add_quote(self, tok1, communicationsLineName, isQuoteSetOne):
         print("add_quote", tok1)
-        self.read_quotes()
-        length = len(self.quotes_array)
+        self.read_quotes(isQuoteSetOne)
+        length = len(self.quotes_array1 if isQuoteSetOne else self.quotes_array)
         for i in range(length):
-            q = self.quotes_array[i]
+            q = (self.quotes_array1 if isQuoteSetOne else self.quotes_array)[i]
             if not "id" in q:
                 q["id"] = i + 1
         quote = " ".join(tok1[4:])
         quoteId = length + 1
-        self.quotes_array.append({
+        (self.quotes_array1 if isQuoteSetOne else self.quotes_array).append({
             "id": quoteId,
             "posted-by": tok1[0][1:],
             "text": quote,
             "date-posted": str(datetime.datetime.now(pytz.utc))
         })
         at = tok1[2]
-        self.write_quotes()
+        self.write_quotes(isQuoteSetOne)
         if self.is_compact_for_channel(communicationsLineName):
             if len(quote) >= 15:
                 report = f"Quote [{quoteId}] added: '{quote[:7]}...{quote[-7:]}'."
@@ -1079,14 +924,17 @@ class BichBot:
         cmdtok = tok1[3].split(":")
         if len(cmdtok) < 2: return False
         cmd = cmdtok[1]
-        if not cmd.startswith("!!"): return False
-        if cmd == "!!q":
+        if cmd == "!!q" or cmd == "!q":
             if self.grantCommand(sent_by, commLineName):
-                self.print_quote(tok1)
+                self.print_quote(tok1, cmd == "!q")
                 return True
-        if cmd == "!!aq":
+        if cmd == "!!aq" or cmd == "!aq":
             if self.grantCommand(sent_by, commLineName):
-                self.add_quote(tok1, commLineName)
+                self.add_quote(tok1, commLineName, cmd == "!aq")
+                return True
+        if cmd == "!!lq" or cmd == "!!ql" or cmd == "!lq" or cmd == '!ql':
+            if self.grantCommand(sent_by, commLineName):
+                self.print_last_quote(tok1, cmd == "!lq" or cmd == '!ql')
                 return True
       except BaseException as ex:
         print("ex:", str(ex), flush=True)
