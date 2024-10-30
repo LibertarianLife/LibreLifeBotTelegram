@@ -1233,6 +1233,7 @@ class BichBot:
 
             btcToUsdFloat = None
             btcToRurFloat = None
+            fe_msg = "Freiexchange: Unknown error"
 
             try:
                 import urllib.request
