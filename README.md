@@ -1,5 +1,4 @@
-# LibreLifeBotTelegram
-https://t.me/LibreLifeBot
+https://t.me/LibertarianLifeBot
 
 ## Installation & Running
 
