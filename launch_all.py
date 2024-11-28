@@ -1,4 +1,5 @@
 import main
 
-main.launch_all()
+if __name__ == '__main__':
+    main.launch_all()
 
