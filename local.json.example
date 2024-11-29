@@ -10,6 +10,8 @@
         "ilitka":{
              "irc_server_hostname":"127.0.0.1"
             ,"port":12444
+            ,"REALNAME":"!help github.com/KDZMEDIABOT"
+            ,"IrcUserName":"kdzbot"
             ,"channelsProps":{
                 "#KATAKOMBYNNNN":{"news_count":6, "modes": {"compact":false} },
                 "#ru":{"news_count":5, "modes": {"compact":true} },
@@ -33,6 +35,8 @@
         "rusnetirc":{
              "irc_server_hostname":"irc.meganet.ru"
             ,"port":6660
+            ,"REALNAME":"!help github.com/KDZMEDIABOT"
+            ,"IrcUserName":"kdzbot"
             ,"channelsProps":{
                 "#magi":{"news_count":1, "modes": {"compact":true}},
                 "#green_meadow":{"news_count":30, "modes": {"compact":false}},
