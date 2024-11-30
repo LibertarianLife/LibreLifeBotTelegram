@@ -855,7 +855,7 @@ class BichBot:
            num = int(num)
            if num <= 0:
                num = 1
-        finds = [q for q in arr if tok1[4].lower() in q['text'].lower()]
+        finds = [q for q in arr if tok1[4].lower() in f"{q['id']} {q['text']}".lower()]
         if len(finds) == 0:
             self.sendmsg(at, 'not found');
             return
