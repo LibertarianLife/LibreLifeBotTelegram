@@ -854,7 +854,7 @@ class BichBot:
         
         finds = [q for q in arr if tok1[4] in q['text']]
         q = finds[num-1]
-        self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']}) [{num}/{len(finds)}]")
+        self.sendmsg(at, f"[{q['id']}, {num}/{len(finds)}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
         return
             
     # tok1[0] :nick!uname@addr.i2p
