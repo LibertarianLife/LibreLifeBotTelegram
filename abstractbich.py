@@ -842,14 +842,19 @@ class BichBot:
         self.sendmsg(at, f"[{q['id']}] {msg} ({poster} at {q['date-posted']})")
         return
             
-    def print_spec_quote(self, tok1, isQuoteSetOne):
+    def print_spec_quote(self, tok1):
         at = tok1[2]
+        print('spec', tok1)
+        isQuoteSetOne = tok1[3].startswith(':!q')
         self.read_quotes(isQuoteSetOne)
         arr = self.quotes_array1 if isQuoteSetOne else self.quotes_array
-        if len(tok1[3][3:]) == 0:
+        num = tok1[3][3:] if isQuoteSetOne else tok1[3][4:] 
+        if len(num) == 0:
             num = 1
         else:
-           num = int(tok1[3][3:])
+           num = int(num)
+           if num <= 0:
+               num = 1
         finds = [q for q in arr if tok1[4].lower() in q['text'].lower()]
         if len(finds) == 0:
             self.sendmsg(at, 'not found');
@@ -954,7 +959,7 @@ class BichBot:
                 return True
         if re.search("^!!q(\\d+)*$", cmd) or re.search("^!q(\\d+)*$", cmd):
             if self.grantCommand(sent_by, commLineName):
-                self.print_spec_quote(tok1, re.search("^!q(\\d+)*$", cmd))
+                self.print_spec_quote(tok1)
                 return True
       except BaseException as ex:
         print("ex:", str(ex), flush=True)
