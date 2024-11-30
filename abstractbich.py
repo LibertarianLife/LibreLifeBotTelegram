@@ -851,6 +851,9 @@ class BichBot:
         else:
            num = int(tok1[3][3:])
         finds = [q for q in arr if tok1[4].lower() in q['text'].lower()]
+        if len(finds) == 0:
+            self.sendmsg(at, 'not found');
+            return
         q = finds[num-1]
         self.sendmsg(at, f"[{q['id']}, {num}/{len(finds)}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
         return
