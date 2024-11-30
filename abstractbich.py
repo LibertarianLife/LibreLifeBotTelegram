@@ -964,7 +964,7 @@ class BichBot:
         #        return True
         if cmd == "!!aq" or cmd == "!aq":
             if self.grantCommand(sent_by, commLineName):
-                self.add_uote(tok1, commLineName, cmd == "!aq")
+                self.add_quote(tok1, commLineName, cmd == "!aq")
                 return True
         if cmd == "!!lq" or cmd == "!!ql" or cmd == "!lq" or cmd == '!ql':
             if self.grantCommand(sent_by, commLineName):
