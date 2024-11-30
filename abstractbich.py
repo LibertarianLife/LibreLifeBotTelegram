@@ -859,6 +859,8 @@ class BichBot:
         if len(finds) == 0:
             self.sendmsg(at, 'not found');
             return
+            if num > len(finds):
+                num = len(finds)
         q = finds[num-1]
         self.sendmsg(at, f"[{q['id']}, {num}/{len(finds)}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
         return
