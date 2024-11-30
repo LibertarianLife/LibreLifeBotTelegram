@@ -10,6 +10,7 @@ import json
 import socket
 import time
 import traceback
+import re
 from random import choice
 from threading import Thread
 from urllib.parse import quote as urlencode
@@ -841,6 +842,20 @@ class BichBot:
         self.sendmsg(at, f"[{q['id']}] {msg} ({poster} at {q['date-posted']})")
         return
             
+    def print_spec_quote(self, tok1, isQuoteSetOne):
+        at = tok1[2]
+        self.read_quotes(isQuoteSetOne)
+        arr = self.quotes_array1 if isQuoteSetOne else self.quotes_array
+        num = int(tok1[3][3:])
+        if len(tok1) == 4:
+            q = arr[num-1]
+            self.sendmsg(at, f"[{q['id']}] {q["text"]} ({q['posted-by'].split("!")[0]} at {q['date-posted']})")
+            return
+        
+        finds = [q for q in arr if tok1[4] in q['text']]
+        q = finds[num-1]
+        self.sendmsg(at, f"[{q['id']}] {q["text"]} ({q['posted-by'].split("!")[0]} at {q['date-posted']}) [{num}/{len(finds)}]")
+        return
             
     # tok1[0] :nick!uname@addr.i2p
     # tok1[1] PRIVMSG
@@ -935,6 +950,10 @@ class BichBot:
         if cmd == "!!lq" or cmd == "!!ql" or cmd == "!lq" or cmd == '!ql':
             if self.grantCommand(sent_by, commLineName):
                 self.print_last_quote(tok1, cmd == "!lq" or cmd == '!ql')
+                return True
+        if re.search("^!!q\\d+$", cmd) or re.search("^!q\\d+$", cmd):
+            if self.grantCommand(sent_by, commLineName):
+                self.print_spec_quote(tok1, re.search("^!q\\d+$", cmd))
                 return True
       except BaseException as ex:
         print("ex:", str(ex), flush=True)
