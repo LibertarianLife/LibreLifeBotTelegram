@@ -849,12 +849,12 @@ class BichBot:
         num = int(tok1[3][3:])
         if len(tok1) == 4:
             q = arr[num-1]
-            self.sendmsg(at, f"[{q['id']}] {q["text"]} ({q['posted-by'].split("!")[0]} at {q['date-posted']})")
+            self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
             return
         
         finds = [q for q in arr if tok1[4] in q['text']]
         q = finds[num-1]
-        self.sendmsg(at, f"[{q['id']}] {q["text"]} ({q['posted-by'].split("!")[0]} at {q['date-posted']}) [{num}/{len(finds)}]")
+        self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']}) [{num}/{len(finds)}]")
         return
             
     # tok1[0] :nick!uname@addr.i2p
