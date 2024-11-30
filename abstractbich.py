@@ -846,13 +846,11 @@ class BichBot:
         at = tok1[2]
         self.read_quotes(isQuoteSetOne)
         arr = self.quotes_array1 if isQuoteSetOne else self.quotes_array
-        num = int(tok1[3][3:])
-        if len(tok1) == 4:
-            q = arr[num-1]
-            self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
-            return
-        
-        finds = [q for q in arr if tok1[4] in q['text']]
+        if len(tok1[3][3:]) == 0:
+            num = 1
+        else:
+           num = int(tok1[3][3:])
+        finds = [q for q in arr if tok1[4].lower() in q['text'].lower()]
         q = finds[num-1]
         self.sendmsg(at, f"[{q['id']}, {num}/{len(finds)}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
         return
@@ -939,10 +937,10 @@ class BichBot:
         cmdtok = tok1[3].split(":")
         if len(cmdtok) < 2: return False
         cmd = cmdtok[1]
-        if cmd == "!!q" or cmd == "!q":
-            if self.grantCommand(sent_by, commLineName):
-                self.print_quote(tok1, cmd == "!q")
-                return True
+        #if cmd == "!!q" or cmd == "!q":
+        #    if self.grantCommand(sent_by, commLineName):
+        #        self.print_quote(tok1, cmd == "!q")
+        #        return True
         if cmd == "!!aq" or cmd == "!aq":
             if self.grantCommand(sent_by, commLineName):
                 self.add_quote(tok1, commLineName, cmd == "!aq")
@@ -951,9 +949,9 @@ class BichBot:
             if self.grantCommand(sent_by, commLineName):
                 self.print_last_quote(tok1, cmd == "!lq" or cmd == '!ql')
                 return True
-        if re.search("^!!q\\d+$", cmd) or re.search("^!q\\d+$", cmd):
+        if re.search("^!!q(\\d+)*$", cmd) or re.search("^!q(\\d+)*$", cmd):
             if self.grantCommand(sent_by, commLineName):
-                self.print_spec_quote(tok1, re.search("^!q\\d+$", cmd))
+                self.print_spec_quote(tok1, re.search("^!q(\\d+)*$", cmd))
                 return True
       except BaseException as ex:
         print("ex:", str(ex), flush=True)
