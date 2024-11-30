@@ -912,21 +912,32 @@ class BichBot:
     def add_quote(self, tok1, communicationsLineName, isQuoteSetOne):
         print("add_quote", tok1)
         self.read_quotes(isQuoteSetOne)
-        length = len(self.quotes_array1 if isQuoteSetOne else self.quotes_array)
+        arr = self.quotes_array1 if isQuoteSetOne else self.quotes_array
+        length = len(arr)
+        idnew = 1
+        dic = {}
         for i in range(length):
-            q = (self.quotes_array1 if isQuoteSetOne else self.quotes_array)[i]
+            q = arr[i]
+            if "id" in q:
+                dic[q['id']]=q
+        for i in range(length):
+            q = arr[i]
             if not "id" in q:
-                q["id"] = i + 1
+                while idnew in dic:
+                    idnew = idnew + 1
+                q["id"] = idnew
         quote = " ".join(tok1[4:])
-        quoteId = length + 1
-        (self.quotes_array1 if isQuoteSetOne else self.quotes_array).append({
-            "id": quoteId,
+        while idnew in dic:
+            idnew = idnew + 1
+        arr.append({
+            "id": idnew,
             "posted-by": tok1[0][1:],
             "text": quote,
             "date-posted": str(datetime.datetime.now(pytz.utc))
         })
         at = tok1[2]
         self.write_quotes(isQuoteSetOne)
+        quoteId = idnew
         if self.is_compact_for_channel(communicationsLineName):
             if len(quote) >= 15:
                 report = f"Quote [{quoteId}] added: '{quote[:7]}...{quote[-7:]}'."
@@ -951,7 +962,7 @@ class BichBot:
         #        return True
         if cmd == "!!aq" or cmd == "!aq":
             if self.grantCommand(sent_by, commLineName):
-                self.add_quote(tok1, commLineName, cmd == "!aq")
+                self.add_uote(tok1, commLineName, cmd == "!aq")
                 return True
         if cmd == "!!lq" or cmd == "!!ql" or cmd == "!lq" or cmd == '!ql':
             if self.grantCommand(sent_by, commLineName):
