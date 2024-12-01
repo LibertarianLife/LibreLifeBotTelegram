@@ -848,9 +848,11 @@ class BichBot:
         isQuoteSetOne = tok1[3].startswith(':!q')
         self.read_quotes(isQuoteSetOne)
         arr = self.quotes_array1 if isQuoteSetOne else self.quotes_array
-        num = tok1[3][3:] if isQuoteSetOne else tok1[3][4:] 
+        num = tok1[3][3:].strip() if isQuoteSetOne else tok1[3][4:].strip()
         if len(num) == 0:
-            num = 1
+            q = arr[randrange(len(arr))
+            self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
+            return
         else:
            num = int(num)
            if num <= 0:
