@@ -851,13 +851,15 @@ class BichBot:
         arr = self.quotes_array1 if isQuoteSetOne else self.quotes_array
         num = tok1[3][3:].strip() if isQuoteSetOne else tok1[3][4:].strip()
         if len(num) == 0:
-            q = arr[random.randrange(len(arr))]
-            self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
-            return
+            num = 1
         else:
            num = int(num)
            if num <= 0:
                num = 1
+        if len(tok1)<=4 or tok1[4].strip()=='':
+            q = arr[random.randrange(len(arr))]
+            self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
+            return
         finds = [q for q in arr if tok1[4].lower() in f"{q['id']} {q['text']}".lower()]
         if len(finds) == 0:
             self.sendmsg(at, 'not found');
