@@ -854,7 +854,7 @@ class BichBot:
         tok_s = tok_s[len(prefix):]
         if(re.search("^(\\d+)(.*)$", tok_s)):
             num = re.match('^(\\d+)(.*)$', tok_s).group(1)
-            tok_s = re.match('^(\\d+)(.*)$', tok_s).group(2)
+            tok_s = re.match('^(\\d+)(.*)$', tok_s).group(2).strip()
         else:
             tok_s = tok_s.strip()
             num = ''
@@ -871,7 +871,7 @@ class BichBot:
            if num <= 0:
                print(f'num_parsed3 "{num}"')
                num = 1
-        print(f'num_parsed2 "{num}"')
+        print(f'num_parsed2,tok_s "{num}","{tok_s}"')
         if len(tok1)<=4 or tok_s=='':
             q = arr[random.randrange(len(arr))]
             self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
