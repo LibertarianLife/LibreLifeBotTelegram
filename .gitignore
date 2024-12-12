@@ -108,8 +108,8 @@ nohup.out
 
 *.sublime-*
 *~
-
 quotes.json
-
 .idea
 *json
+irc_patriarch_kdzbot.dat
+tunnels.conf
