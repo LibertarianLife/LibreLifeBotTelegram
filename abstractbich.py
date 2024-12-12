@@ -848,20 +848,30 @@ class BichBot:
         print('spec', tok1)
         print(f'tok_s "{tok_s}"')
         isQuoteSetOne = tok_s.startswith('!q')
+        prefix = '!q' if isQuoteSetOne else '!!q'
         self.read_quotes(isQuoteSetOne)
         arr = self.quotes_array1 if isQuoteSetOne else self.quotes_array
-        tok_s = tok_s[2:].strip() if isQuoteSetOne else tok_s[3:].strip()
-        num = tok_s
+        tok_s = tok_s[len(prefix):]
+        if(re.search("^(\\d+)(.*)$", tok_s)):
+            num = re.match('^(\\d+)(.*)$', tok_s).group(1)
+            tok_s = re.match('^(\\d+)(.*)$', tok_s).group(2)
+        else:
+            tok_s = tok_s.strip()
+            num = ''
+        print(f'num "{num}"')
         if len(num) == 0:
             num = 1
+            print(f'num_parsed4 "{num}"')
         else:
            try:
-               num = -1
                num = int(num)
+               print(f'num_parsed1 "{num}"')
            except:
-               pass
+               num = -1
            if num <= 0:
+               print(f'num_parsed3 "{num}"')
                num = 1
+        print(f'num_parsed2 "{num}"')
         if len(tok1)<=4 or tok_s=='':
             q = arr[random.randrange(len(arr))]
             self.sendmsg(at, f"[{q['id']}] {q['text']} ({q['posted-by'].split('!')[0]} at {q['date-posted']})")
