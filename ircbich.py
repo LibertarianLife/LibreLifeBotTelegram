@@ -736,6 +736,10 @@ class IrcBich(BichBot):
 
 
             except KeyboardInterrupt:
+                import traceback as tb
+                tb.print_exc()
+                import sys
+                sys.stderr.flush()
                 raise
             except:
                 import traceback as tb
@@ -746,6 +750,10 @@ class IrcBich(BichBot):
                 try:
                     self.irc_socket.close()
                 except KeyboardInterrupt as e:
+                    import traceback as tb
+                    tb.print_exc()
+                    import sys
+                    sys.stderr.flush()
                     raise e
                 except:
                     import traceback as tb
@@ -757,10 +765,17 @@ class IrcBich(BichBot):
     def pinger_of_server(self):
         print("spawned pinger_of_server, key: '%s'" % self.settings_key)
         while True:
-            print("---new ping to server---")
-            self.pong_received = False
-            self.send('PING :' + str(time.time()) + '\r\n')
-            time.sleep(180)
+            try:
+                print("---new ping to server---")
+                self.pong_received = False
+                self.send('PING :' + str(time.time()) + '\r\n')
+            except:
+                import traceback as tb
+                tb.print_exc()
+                import sys
+                sys.stderr.flush()
+            
+                time.sleep(180)
             if self.pong_received:
                 continue
             else:
